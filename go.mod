@@ -6,7 +6,7 @@ require (
 	github.com/gempir/go-twitch-irc/v3 v3.3.0
 	github.com/google/uuid v1.3.1
 	github.com/grandcat/zeroconf v1.0.0
-	github.com/tlanfer/go-streamlabs v0.0.0-20231113172621-0c164e047fe1
+	github.com/tlanfer/go-streamlabs v0.0.0-20231113172924-af00afa88af4
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -21,5 +21,3 @@ require (
 	golang.org/x/tools v0.14.0 // indirect
 
 )
-
-replace github.com/tlanfer/go-streamlabs v0.0.0-20231113172621-0c164e047fe1 => C:\Users\tlanf\Documents\Development\git\github.com\tlanfer\go-streamlabs
