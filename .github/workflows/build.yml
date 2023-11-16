@@ -39,7 +39,10 @@ jobs:
           go-version: '1.21.x'
           cache-dependency-path: subdir/go.sum
       - name: Build
-        run: go build -v ./...
+        run: GOOS=windows GOARCH=amd64 go build -v ./cmd -o companion.exe
 
-
-
+      - uses: actions/upload-artifact@v3
+        with:
+          name: companion
+          path: companion.exe
+          if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
