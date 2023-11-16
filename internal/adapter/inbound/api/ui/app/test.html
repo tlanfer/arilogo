@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        svg {
+            height: 400px;
+        }
+
+        svg path {
+            fill: none;
+            stroke-width: 10px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        svg path.color1 {
+            stroke: dodgerblue;
+            stroke-dasharray: 1470 1470;
+        }
+
+        svg path.color2 {
+            stroke: tomato;
+            stroke-dasharray: 1470 0;
+        }
+
+    </style>
+</head>
+<body>
+<!doctype html>
+<svg viewBox="90 90 320 300">
+    <path class="color2" d="M 254.355 342.015 C 254.355 342.015 261.373 305.048 171.022 261.698 C 80.671 218.348 84.56 131.418 143.321 112.001 C 202.082 92.584 250 139.468 250 139.468 C 250 139.468 287.616 104.167 322.917 103.588 C 358.218 103.009 398.727 131.366 399.884 169.56 C 401.041 207.754 372.685 240.741 344.328 257.523 C 315.971 274.305 268.519 254.051 276.042 236.69 C 283.565 219.329 313.657 225.116 341.435 237.847 C 369.213 250.578 387.731 308.449 387.731 308.449 C 387.731 308.449 354.746 201.967 350.116 160.879 C 345.486 119.791 335.07 166.666 335.07 166.666 C 335.07 166.666 314.166 265.462 306.135 306.713 C 298.104 347.964 268.793 374.818 244.792 368.634 C 220.791 362.45 215.278 342.014 223.958 327.546"></path>
+    <path class="color1" d="M 254.355 342.015 C 254.355 342.015 261.373 305.048 171.022 261.698 C 80.671 218.348 84.56 131.418 143.321 112.001 C 202.082 92.584 250 139.468 250 139.468 C 250 139.468 287.616 104.167 322.917 103.588 C 358.218 103.009 398.727 131.366 399.884 169.56 C 401.041 207.754 372.685 240.741 344.328 257.523 C 315.971 274.305 268.519 254.051 276.042 236.69 C 283.565 219.329 313.657 225.116 341.435 237.847 C 369.213 250.578 387.731 308.449 387.731 308.449 C 387.731 308.449 354.746 201.967 350.116 160.879 C 345.486 119.791 335.07 166.666 335.07 166.666 C 335.07 166.666 314.166 265.462 306.135 306.713 C 298.104 347.964 268.793 374.818 244.792 368.634 C 220.791 362.45 215.278 342.014 223.958 327.546"></path>
+</svg>
+<br>
+Up to: <input type="number" id="no1"><input type="color" id="color1"><br>
+Up to: <input type="number" id="no2"><input type="color" id="color2">
+<script>
+    let no1 = document.getElementById("no1");
+    let no2 = document.getElementById("no2");
+    let color1 = document.getElementById("color1");
+    let color2 = document.getElementById("color2");
+
+    const max = 1470;
+
+    let upd = ()=>{
+        let upto = (no1.value/150)*max;
+        document.querySelector("path.color1").style.strokeDashoffset = upto;
+    }
+
+    no1.addEventListener("input", upd);
+    no2.addEventListener("change", upd);
+    color1.addEventListener("change", upd);
+    color2.addEventListener("change", upd);
+</script>
+</body>
+</html>

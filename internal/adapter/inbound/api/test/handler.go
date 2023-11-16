@@ -2,14 +2,12 @@ package test
 
 import (
 	"api/internal/core"
-	"api/internal/core/controller"
 	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 )
 
-func NewHandler(wl *controller.Controller) http.Handler {
+func NewHandler(wl *core.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		if req.Method != http.MethodPost {
 			http.Error(w, "nope", http.StatusMethodNotAllowed)
@@ -23,14 +21,14 @@ func NewHandler(wl *controller.Controller) http.Handler {
 			return
 		}
 
-		wl.AddToQueue(core.Action{
-			State:    dto.State,
-			Duration: time.Duration(dto.Duration) * time.Second,
+		wl.AddToQueue(core.Reaction{
+			PresetId: dto.PresetId,
+			Duration: dto.Duration,
 		})
 	})
 }
 
 type Dto struct {
-	Duration int        `json:"duration"`
-	State    core.State `json:"state"`
+	Duration int           `json:"duration"`
+	PresetId core.PresetId `json:"presetId"`
 }

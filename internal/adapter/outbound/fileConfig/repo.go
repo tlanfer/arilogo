@@ -7,9 +7,7 @@ import (
 	"os"
 )
 
-var _ core.ReSubRepo = (*Repo)(nil)
 var _ core.GlobalConfigRepo = (*Repo)(nil)
-var _ core.PatternRepo = (*Repo)(nil)
 
 func New(filename string) Repo {
 	return Repo{
@@ -52,7 +50,12 @@ func (r Repo) save(_ context.Context, dto *Dto) error {
 }
 
 type Dto struct {
-	IdleState core.State              `yaml:"idle_state"`
-	Subs      map[string]ReSub        `yaml:"resubs"`
-	Patterns  map[string]core.Pattern `yaml:"patterns"`
+	DeviceAddr      string                   `yaml:"deviceAddr"`
+	IdlePreset      core.PresetId            `yaml:"idlePreset"`
+	TwitchChannel   string                   `yaml:"twitchChannel"`
+	StreamlabsToken string                   `yaml:"streamlabsToken"`
+	Resubs          map[string]core.Reaction `yaml:"resubs"`
+	Gifts           map[string]core.Reaction `yaml:"gifts"`
+	BitAlerts       map[string]core.Reaction `yaml:"bits"`
+	DonationAlerts  map[string]core.Reaction `yaml:"donations"`
 }

@@ -22,12 +22,18 @@ type Client struct {
 	client http.Client
 }
 
+func (c *Client) setAddr(addr string) {
+	c.addr = addr
+}
+
 func (c *Client) get(path string, dto any) error {
 	resp, err := c.client.Get(fmt.Sprintf("http://%v/json/%v", c.addr, path))
 	if err != nil {
 		return fmt.Errorf("failed to get %v: %w", path, err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if err := json.NewDecoder(resp.Body).Decode(dto); err != nil {
 		return fmt.Errorf("failed to parse %v: %w", path, err)
@@ -42,13 +48,14 @@ func (c *Client) post(path string, in, out any) error {
 	if err != nil {
 		return fmt.Errorf("failed to serialize %v: %w", in, err)
 	}
-	//log.Println("JSON: ", string(buf))
 
 	resp, err := c.client.Post(fmt.Sprintf("http://%v/json/%v", c.addr, path), "application/json", bytes.NewReader(buf))
 	if err != nil {
 		return fmt.Errorf("failed to get %v: %w", path, err)
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if out != nil {
 		if err := json.NewDecoder(resp.Body).Decode(out); err != nil {

@@ -2,23 +2,22 @@ package idle
 
 import (
 	"api/internal/core"
-	"api/internal/core/controller"
 	"encoding/json"
 	"log"
 	"net/http"
 )
 
-func NewHandler(repo core.GlobalConfigRepo, c *controller.Controller) http.Handler {
+func NewHandler(repo core.GlobalConfigRepo, c *core.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		switch req.Method {
 		case http.MethodGet:
-			state, err := repo.GetIdleState(req.Context())
+			presetId, err := repo.GetIdleState(req.Context())
 			if err != nil {
 				log.Printf("failed to load: %v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			dto := Dto{
-				IdleState: *state,
+				IdlePresetId: presetId,
 			}
 			w.Header().Set("Content-Type", "application/json")
 			if err := json.NewEncoder(w).Encode(&dto); err != nil {
@@ -30,8 +29,7 @@ func NewHandler(repo core.GlobalConfigRepo, c *controller.Controller) http.Handl
 				log.Printf("failed to parse request: %v", err)
 			}
 
-			log.Printf("new idle state: %+v", dto.IdleState)
-			if err := repo.SetIdleState(req.Context(), dto.IdleState); err != nil {
+			if err := repo.SetIdleState(req.Context(), dto.IdlePresetId); err != nil {
 				log.Printf("failed to save: %v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
@@ -44,5 +42,5 @@ func NewHandler(repo core.GlobalConfigRepo, c *controller.Controller) http.Handl
 }
 
 type Dto struct {
-	IdleState core.State `json:"IdleState"`
+	IdlePresetId core.PresetId `json:"idlePresetId"`
 }

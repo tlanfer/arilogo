@@ -4,50 +4,48 @@ import (
 	"api/internal/core"
 	"context"
 	"fmt"
-	"time"
 )
 
-type ReSub struct {
-	Months   int           `yaml:"months"`
-	State    core.State    `yaml:"state"`
-	Duration time.Duration `yaml:"duration"`
-}
+var _ core.ReSubAlertRepo = (*Repo)(nil)
+var _ core.GiftSubAlertRepo = (*Repo)(nil)
 
-func (r Repo) GetAllReSubs(ctx context.Context) (core.ReSubs, error) {
+func (r Repo) GetAllReSubs(ctx context.Context) (map[string]core.Reaction, error) {
 	loaded, err := r.load(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load config: %w", err)
 	}
 
-	var resubs []core.ReSub
-
-	for id, sub := range loaded.Subs {
-		resubs = append(resubs, core.ReSub{
-			Id:       id,
-			Months:   sub.Months,
-			State:    sub.State,
-			Duration: sub.Duration,
-		})
-	}
-
-	return resubs, nil
+	return loaded.Resubs, nil
 }
 
-func (r Repo) SaveSubAlert(ctx context.Context, rs core.ReSub) error {
+func (r Repo) GetResubById(ctx context.Context, id string) (*core.Reaction, error) {
+	loaded, err := r.load(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	if loaded.Resubs == nil {
+		return nil, nil
+	}
+
+	if reaction, ok := loaded.Resubs[id]; ok {
+		return &reaction, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func (r Repo) SetResubById(ctx context.Context, id string, reaction core.Reaction) error {
 	loaded, err := r.load(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	if loaded.Subs == nil {
-		loaded.Subs = map[string]ReSub{}
+	if loaded.Resubs == nil {
+		loaded.Resubs = map[string]core.Reaction{}
 	}
 
-	loaded.Subs[rs.Id] = ReSub{
-		State:    rs.State,
-		Months:   rs.Months,
-		Duration: rs.Duration,
-	}
+	loaded.Resubs[id] = reaction
 
 	if err := r.save(ctx, loaded); err != nil {
 		return fmt.Errorf("failed to save sub alert: %w", err)
@@ -56,19 +54,84 @@ func (r Repo) SaveSubAlert(ctx context.Context, rs core.ReSub) error {
 	return nil
 }
 
-func (r Repo) DeleteSubAlert(ctx context.Context, id string) error {
+func (r Repo) DeleteResubById(ctx context.Context, id string) error {
 	loaded, err := r.load(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to load config: %w", err)
 	}
-	if loaded.Subs == nil {
-		return nil
+
+	if loaded.Resubs == nil {
+		loaded.Resubs = map[string]core.Reaction{}
 	}
 
-	delete(loaded.Subs, id)
+	delete(loaded.Resubs, id)
 
 	if err := r.save(ctx, loaded); err != nil {
-		return fmt.Errorf("failed to delete sub alert: %w", err)
+		return fmt.Errorf("failed to save sub alert: %w", err)
+	}
+
+	return nil
+}
+
+func (r Repo) GetAllGifts(ctx context.Context) (map[string]core.Reaction, error) {
+	loaded, err := r.load(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	return loaded.Gifts, nil
+}
+
+func (r Repo) GetGiftById(ctx context.Context, id string) (*core.Reaction, error) {
+	loaded, err := r.load(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to load config: %w", err)
+	}
+
+	if loaded.Gifts == nil {
+		return nil, nil
+	}
+
+	if reaction, ok := loaded.Gifts[id]; ok {
+		return &reaction, nil
+	} else {
+		return nil, nil
+	}
+}
+
+func (r Repo) SetGiftById(ctx context.Context, id string, reaction core.Reaction) error {
+	loaded, err := r.load(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+
+	if loaded.Gifts == nil {
+		loaded.Gifts = map[string]core.Reaction{}
+	}
+
+	loaded.Gifts[id] = reaction
+
+	if err := r.save(ctx, loaded); err != nil {
+		return fmt.Errorf("failed to save sub alert: %w", err)
+	}
+
+	return nil
+}
+
+func (r Repo) DeleteGiftById(ctx context.Context, id string) error {
+	loaded, err := r.load(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+
+	if loaded.Resubs == nil {
+		loaded.Resubs = map[string]core.Reaction{}
+	}
+
+	delete(loaded.Gifts, id)
+
+	if err := r.save(ctx, loaded); err != nil {
+		return fmt.Errorf("failed to save sub alert: %w", err)
 	}
 
 	return nil
