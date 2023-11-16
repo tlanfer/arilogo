@@ -28,6 +28,7 @@ jobs:
         with:
           node-version: 16
           cache: 'npm'
+          cache-dependency-path: internal/adapter/inbound/api/ui/app/package-lock.json
       - run: npm ci
         working-directory: internal/adapter/inbound/api/ui/app
       - run: npm run build
