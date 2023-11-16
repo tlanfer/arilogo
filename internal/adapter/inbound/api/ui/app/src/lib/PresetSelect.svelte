@@ -4,13 +4,23 @@
     export let selection = 2;
     export let dispatch = createEventDispatcher();
 
+    export let trigger = "";
     let presets = [];
 
-    onMount(async () => {
+    $: onTriggerChange(trigger)
+
+    let onTriggerChange = async ()=>{
+        await load();
+    }
+
+    export let load = async () => {
         let response = await fetch("/api/presets");
         let data = await response.json()
         presets = data.presets;
-    })
+    }
+
+
+    onMount(load);
 
     let change = ()=>{
         dispatch("change", {});

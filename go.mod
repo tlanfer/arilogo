@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.3.1
 	github.com/grandcat/zeroconf v1.0.0
 	github.com/sqweek/dialog v0.0.0-20220809060634-e981b270ebbf
-	github.com/tlanfer/go-streamlabs v0.0.0-20231116194020-5d301429b3fc
+	github.com/tlanfer/go-streamlabs v0.0.0-20231116205711-2ac3c1758697
 	gopkg.in/yaml.v3 v3.0.1
 )
 

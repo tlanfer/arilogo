@@ -53,7 +53,7 @@ func (u *Ui) onExit() {}
 
 func (u *Ui) Quit() {
 	systray.Quit()
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(200 * time.Millisecond)
 }
 
 func openBrowser(url string) {

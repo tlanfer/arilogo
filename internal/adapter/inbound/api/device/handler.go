@@ -26,10 +26,14 @@ func NewDeviceHandler(config core.GlobalConfigRepo, light core.Light) http.Handl
 				return
 			}
 
-			if err := config.SetDeviceAddr(req.Context(), dto.Address); err != nil {
+			addr := strings.TrimSpace(dto.Address)
+
+			if err := config.SetDeviceAddr(req.Context(), addr); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+
+			light.SetAddr(addr)
 		}
 	})
 }

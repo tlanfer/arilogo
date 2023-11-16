@@ -9,6 +9,7 @@ import (
 type Light interface {
 	Presets() map[PresetId]string
 	SetPreset(id PresetId) error
+	SetAddr(addr string)
 }
 
 func NewController(repo GlobalConfigRepo, clients ...Light) *Controller {

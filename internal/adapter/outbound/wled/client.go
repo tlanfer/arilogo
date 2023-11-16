@@ -1,6 +1,7 @@
 package wled
 
 import (
+	"api/internal/core"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -8,8 +9,8 @@ import (
 	"time"
 )
 
-func New(addr string) Client {
-	return Client{
+func New(addr string) core.Light {
+	return &Client{
 		addr: addr,
 		client: http.Client{
 			Timeout: 2 * time.Second,
@@ -22,7 +23,7 @@ type Client struct {
 	client http.Client
 }
 
-func (c *Client) setAddr(addr string) {
+func (c *Client) SetAddr(addr string) {
 	c.addr = addr
 }
 

@@ -12,7 +12,9 @@ func NewHandler(c core.Light) http.Handler {
 		switch req.Method {
 		case http.MethodGet:
 			presets := c.Presets()
-			dto := Dto{}
+			dto := Dto{
+				Presets: make([]PresetDto, 0),
+			}
 			for id, name := range presets {
 				if name == "" {
 					continue

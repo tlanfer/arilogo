@@ -9,6 +9,8 @@
     let streamlabsToken;
     let deviceAddr;
 
+    let trigger;
+
     let getIdlePreset = async () => {
             let response = await fetch("/api/idle");
             let data = await response.json()
@@ -59,12 +61,13 @@
             deviceAddr = data.address;
     }
     let setDeviceAddr = async () => {
-            await fetch("/api/device/addr", {
-                    method: "POST",
-                    body: JSON.stringify({
-                            address: deviceAddr,
-                    })
+        await fetch("/api/device/addr", {
+            method: "POST",
+            body: JSON.stringify({
+                    address: deviceAddr,
             })
+        })
+        trigger = new Date();
     };
 
 
@@ -104,13 +107,15 @@
 
 
         <label for="idlePreset">Idle preset</label>
-        <PresetSelect bind:selection={idlePresetId} on:change={setIdlePreset}></PresetSelect>
+        <PresetSelect bind:trigger={trigger} bind:selection={idlePresetId} on:change={setIdlePreset}></PresetSelect>
 
         <label for="twitchChannel">Twitch channel</label>
         <input type="text" bind:value={twitchChannel} on:change={setTwitchChannel}>
 
         <label for="streamlabs">Streamlabs Token</label>
         <input type="password" bind:value={streamlabsToken} on:change={setStreamlabsToken}>
+        <div class="description"><a href="https://streamlabs.com/dashboard#/settings/api-settings" target="_blank">Click here</a> and log in, then find API Tokens ➡ Your Socket API Token</div>
+
 </div>
 
 <style>
@@ -118,6 +123,10 @@
         display: grid;
         grid-template-columns: 40% auto;
         grid-gap: 10px;
+    }
+    #menu .description {
+        font-size: smaller;
+        grid-column: 1 / 3 ;
     }
     #menu label {
         padding: 15px 0;

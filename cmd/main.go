@@ -74,8 +74,7 @@ func initLight(config core.GlobalConfigRepo) (core.Light, error) {
 		return nil, fmt.Errorf("failed to read device addr from config: %v", err)
 	}
 
-	wl := wled.New(addr)
-	return &wl, nil
+	return wled.New(addr), nil
 }
 
 func initTwitch(config core.GlobalConfigRepo) (twitchchat.Twitch, error) {
