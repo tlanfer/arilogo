@@ -36,3 +36,12 @@ jobs:
           name: companion
           path: companion.exe
           if-no-files-found: error # 'warn' or 'ignore' are also available, defaults to `warn`
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            companion.exe
