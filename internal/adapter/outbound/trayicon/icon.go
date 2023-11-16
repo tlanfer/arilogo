@@ -1,96 +1,76 @@
 package trayicon
 
 import (
-	"companion"
+	"fmt"
 	"github.com/getlantern/systray"
 	"github.com/sqweek/dialog"
+	"log"
+	"os/exec"
+	"runtime"
 	"time"
 )
 
-func New() companion.Ui {
-	u := ui{
+func New() *Ui {
+	u := Ui{
 		false,
-		false,
-		false,
-
 		make(chan any),
 	}
 	go systray.Run(u.onReady, u.onExit)
 	return &u
 }
 
-type ui struct {
-	twitchConnected     bool
-	streamlabsConnected bool
-
-	active bool
-
+type Ui struct {
+	active   bool
 	quitChan chan any
 }
 
-func (u *ui) SetActive(t time.Duration) {
-	u.active = true
-	u.updateIcon()
-
-	time.AfterFunc(t, func() {
-		u.active = false
-		u.updateIcon()
-	})
-}
-
-func (u *ui) OnQuit() <-chan any {
+func (u *Ui) OnQuit() <-chan any {
 	return u.quitChan
 }
 
-func (u *ui) ErrorMessage(fmt string, parts ...any) {
+func (u *Ui) ErrorMessage(fmt string, parts ...any) {
 	dialog.Message(fmt, parts...).Error()
 }
 
-func (u *ui) SetTwitchConnected(b bool) {
-	u.twitchConnected = b
-	u.updateIcon()
-}
+func (u *Ui) onReady() {
+	systray.SetTitle("Logo Companion")
+	systray.SetIcon(icon)
+	settings := systray.AddMenuItem("Settings", "Open the settings menu")
+	quit := systray.AddMenuItem("Quit", "Quit the companion")
 
-func (u *ui) SetStreamlabsConnected(b bool) {
-	u.streamlabsConnected = b
-	u.updateIcon()
-}
+	for {
+		select {
+		case <-settings.ClickedCh:
+			openBrowser("http://localhost:3080")
 
-func (u *ui) updateIcon() {
-	if u.streamlabsConnected && u.twitchConnected {
-		systray.SetIcon(iconOnOn)
-	}
-
-	if !u.streamlabsConnected && u.twitchConnected {
-		systray.SetIcon(iconOffOn)
-	}
-
-	if u.streamlabsConnected && !u.twitchConnected {
-		systray.SetIcon(iconOnOff)
-	}
-
-	if !u.streamlabsConnected && !u.twitchConnected {
-		systray.SetIcon(iconOffOff)
-	}
-
-	if u.active {
-		systray.SetIcon(iconActive)
+		case <-quit.ClickedCh:
+			u.quitChan <- "quit"
+		}
 	}
 }
 
-func (u *ui) onReady() {
-	u.updateIcon()
+func (u *Ui) onExit() {}
 
-	systray.SetTitle("Squirtttv")
-	menuItem := systray.AddMenuItem("Quit", "Quit the companion")
-
-	<-menuItem.ClickedCh
-	u.quitChan <- "quit"
-}
-
-func (u *ui) onExit() {}
-
-func (u *ui) Quit() {
+func (u *Ui) Quit() {
 	systray.Quit()
 	time.Sleep(100 * time.Millisecond)
+}
+
+func openBrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }

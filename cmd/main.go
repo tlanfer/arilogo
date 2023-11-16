@@ -14,6 +14,7 @@ import (
 	"api/internal/adapter/inbound/api/ui"
 	twitchchat "api/internal/adapter/inbound/twitch"
 	"api/internal/adapter/outbound/fileConfig"
+	"api/internal/adapter/outbound/trayicon"
 	"api/internal/adapter/outbound/wled"
 	"api/internal/core"
 	"context"
@@ -56,7 +57,15 @@ func main() {
 	mananger := core.NewEventManager(controller, config, twitch, sl)
 	go controller.Run()
 	go mananger.Run()
-	serve(wl, twitch, sl, controller, config)
+	go serve(wl, twitch, sl, controller, config)
+
+	initUi()
+}
+
+func initUi() {
+	ui := trayicon.New()
+	<-ui.OnQuit()
+	ui.Quit()
 }
 
 func initLight(config core.GlobalConfigRepo) (core.Light, error) {
