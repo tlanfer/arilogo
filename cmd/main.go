@@ -136,7 +136,7 @@ func serve(light core.Light, tc twitchchat.Twitch, sl streamlabs.Streamlabs, c *
 
 	mux.Handle("/", ui.NewHandler())
 
-	err := http.ListenAndServe(":3080", mux)
+	err := http.ListenAndServe(":3081", mux)
 	if !errors.Is(err, http.ErrServerClosed) {
 		log.Println("Server closed:", err)
 	}

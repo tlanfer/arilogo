@@ -41,7 +41,7 @@ func (u *Ui) onReady() {
 	for {
 		select {
 		case <-settings.ClickedCh:
-			openBrowser("http://localhost:3080")
+			openBrowser("http://localhost:3081")
 
 		case <-quit.ClickedCh:
 			u.quitChan <- "quit"
